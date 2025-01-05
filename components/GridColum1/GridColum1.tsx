@@ -11,7 +11,7 @@ const GridColum1 = () => {
 
   function toggleMenu(){
     setToggle((prev)=> {
-      let toggle = !prev
+      const toggle = !prev
       if(toggle){
         document.body.style.overflow = 'hidden'
       }else{

@@ -2,10 +2,10 @@
 import React from 'react'
 import Link from 'next/link'
 import { useState , useRef , useEffect, } from "react";
-
+import { memo } from 'react'
 const InputField = () => {
 
-        let [color , setColor] = useState(false)
+        const [color , setColor] = useState(false)
         const divRef = useRef<HTMLDivElement>(null);
     
     function borderChange(){
@@ -52,4 +52,4 @@ const InputField = () => {
   )
 }
 
-export default InputField
+export default memo(InputField);

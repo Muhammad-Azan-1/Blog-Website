@@ -19,9 +19,10 @@ type blog = {
   initialValue:string;
 }
 const GridColum2 = () => {
-  let[data ,setData] = useState<blog[]>([])
-  let [lenght, setLenght] = useState<number>();
-  let [toggle, setToggle] = useState<boolean>(false);
+  console.log("GridColum2 renders")
+  const[data ,setData] = useState<blog[]>([])
+  const [lenght, setLenght] = useState<number>();
+  const [toggle, setToggle] = useState<boolean>(false);
   const divRef = useRef<HTMLTextAreaElement | null>(null); // use ref is connected with text area so text area elements is in inside the divRef
 
   function toggleColorDiv() {
@@ -41,7 +42,7 @@ const GridColum2 = () => {
     return () => document.removeEventListener("click", handleOutsideClick); // Cleanup listener when the component is unmounted
   }, []);
 
-  function textAreaAutoHeight(e: any) {
+  function textAreaAutoHeight() {
     if (divRef.current && divRef.current.value !== "") {
       //? if the element insdie teh divRef.current exsist and if the value inside that element exisit then its height will be equal to what ever the scroll height
 
@@ -60,22 +61,29 @@ const GridColum2 = () => {
   
   useEffect(() => {
     async function fetchData(){
-      
+
+      const storedData = localStorage.getItem("blogData");
+      if(storedData){
+        const getData = JSON.parse(storedData);
+       setData(getData)
+
+      }else{
+        
      try{ const query = `*[_type == "blog"] | order(_createdAt asc){title , id , image , "slug": slug.current,author->{name, bio, image }, initialValue}`
       const response : blog[] = await client.fetch(query)
-        console.log(response)
-        setData(response)
+       
+        localStorage.setItem("blogData", JSON.stringify(response));
+       
+        
       } catch(error){
         console.error(error)
-  }
-     
-
-      }
+  }   }
+}
       
       fetchData()
   },[])
     
-  
+
     
 
 

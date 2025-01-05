@@ -1,7 +1,5 @@
 import { PortableTextComponents } from '@portabletext/react';
 
-
-
 export const Component:PortableTextComponents = {
  block:{
     h2 : ({children , index}) => {
@@ -11,9 +9,9 @@ export const Component:PortableTextComponents = {
         )
     },
 
-    h3 : ({children , index}) =>{
+    h3 : ({children}) =>{
         return(
-            <h3 className='text-[20px] sm:text-[25px] mt-[40px] mb-[10px]'>{children}</h3>
+            <h3 className='text-[20px] sm:text-[25px] mt-[20px] mb-[10px]'>{children}</h3>
         )
     },
 

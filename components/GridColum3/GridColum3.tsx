@@ -1,5 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
+import { memo } from 'react'
+// Using memo is a good choice to prevent unnecessary re-renders of GridColum3 when its props haven't changed.
 const GridColum3 = () => {
   return (
     <>
@@ -78,4 +80,4 @@ const GridColum3 = () => {
   )
 }
 
-export default GridColum3
+export default memo(GridColum3);

@@ -1,7 +1,7 @@
-"use client"
+
 import Image from "next/image";
 import InputField from "../InputField/InputField";
-
+import { memo } from "react";
 
 
 const Header = () => {
@@ -51,5 +51,5 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default memo(Header);
 

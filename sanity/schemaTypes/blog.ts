@@ -60,6 +60,7 @@ export const blog = defineType({
             name:'initialValue',
             type: "datetime",
             title: "Published At",
+            readOnly:true,
            initialValue:(new Date()).toISOString()
                //** */ Automatically sets the date when the blog is created
         }),
@@ -67,6 +68,12 @@ export const blog = defineType({
         // **This ensures the date is set only once when the blog post is created.
         // **Even if the post is updated later, the original publishedAt value remains unchanged.
 
+        defineField({
+            name:'designation',
+            title:'Designation',
+            type:'string',
+            validation:Rule => Rule.required().error('This field is required'),
+        }),
 
         defineField({
             name:'author',

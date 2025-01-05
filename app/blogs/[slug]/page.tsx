@@ -11,71 +11,111 @@ import { PortableText } from "@portabletext/react";
 import { useState } from 'react'
 import { useParams } from 'next/navigation';
 import { Component } from '@/components/CustomComponent'
+import Loader from '@/components/Loader/Loader'
+import Comment from '@/components/Comment/Comment'
+import AddAllComment from '@/components/AddAllComment/AddAllComment'
+
+
+type CommentProps = {
+  name: string
+  comment:string,
+  _createdAt:string,
+  _id:string
+
+}
+type Props = CommentProps; 
 
 type data ={
   title: string;
   image: { asset: { url: string } },
   slug: string,
+  _id:string,
+  designation:string,
   author: {
     name: string;
     image: { asset: { url: string } };
     bio: string;
   }
   initialValue:string;
-  content:any
+  content:{
+    _type: 'block'; // Block content type
+    style: 'normal' | 'h1' | 'h2' | 'h3' | 'h4' | 'margin'; // Possible styles
+    children: { _type: 'span'; text: string }[]; // Text elements within a block
+    
+  }[],
+  comment:Props[]
 }
+
 
 const Page = () => {
   
-  let params = useParams()
+  const params = useParams()
   
   // console.log('param', params.slug) // {val: 'blog-title'}
 
-  let [data  , setdata] = useState<data[]>([])
+  const [data  , setdata] = useState<data[]>([])
+  const [loading , setloading] = useState(true)
 
   useEffect(()=>{
-    
+  
    async function fecthingData(){
+  
       try{
-        let query = `
+        const query = `
       *[_type == "blog" && slug.current == '${params.slug}'] {
        title,
        image,
+       _id,
        content,
+       "slug": slug.current,
        author->{name, bio, image},
        initialValue,
+      "comment" : *[_type == "comment" && blog._ref == ^._id] | order(_createdAt desc){
+        name,comment,_createdAt,_id
+    }
       }
         `
-        let response : data[] = await client.fetch(query)
+        const response : data[] = await client.fetch(query)
+        console.log(response)
         setdata(response)
+        setloading(false)
         
       }catch(error){
        throw error
       }
+    
     }
 
-    if(params.slug){
+   
     fecthingData()
-    }
+    
 
-  },[params.slug])
+  },[params.slug , data])
   
+if(loading){
+return(
+  <Loader/>
+)  
 
+  }
+
+else{
 
   return (
     <>
-      {
+      
            
-       data.map((item)=>( 
-
-        <div key={item.slug || item.title}>
+       
+{
+   data.map((item)=>( 
+        <div key={item.slug}>
         <Header/>
         <div className=' md:hidden'>
             <GridColum1/>
           </div>
           
-      
-        <div  className='grid pt-[73px] justify-center w-full  h-screen gap-x-0 lg:gap-x-2 xl:gap-x-3 px-0 lg:px-2 xl:px-0 grid-cols-[100%] lg:grid-cols-[70%_30%] xl:grid-cols-[900px_370px]'>
+         
+        <div   className='grid pt-[73px] justify-center w-full  h-screen gap-x-0 lg:gap-x-2 xl:gap-x-3 px-0 lg:px-2 xl:px-0 grid-cols-[100%] lg:grid-cols-[70%_30%] xl:grid-cols-[900px_370px]'>
      
   {/* //* colum1 */}
         <div className='w-full h-auto '>
@@ -91,7 +131,7 @@ const Page = () => {
 
         <div className="flex  justify-start items-center ">
           <div>
-          <Image src='/images/user1.png' alt="User-Image" width={50} height={50} className="w-[45px] h-[45px]  border-[1px] border-secondary rounded-[100%]"></Image> 
+          <Image src={urlFor(item.author.image).url()} alt="User-Image" width={50} height={50} className="w-[45px] h-[45px]  border-[1px] border-secondary rounded-[100%]"></Image> 
           </div>
           <div className="flex flex-col pl-1">
           <h1 className="text-[#3d3d3d] hover:text-primary font-[800] tracking-wider leading-[4px] rounded-md border-box  hover:bg-[#00000009] px-1 py-[10px] text-[14px]">{item.author.name}</h1>
@@ -113,7 +153,16 @@ const Page = () => {
         <PortableText value={item.content} components={Component} />
        </div>
 
+        <div className='w-full flex justify-center mt-10'>
+        <div className='w-[60%] border-t-[1px] border-[#9d9b9b]'>
+          </div>
         </div>
+
+       <Comment blogId={item._id}/>
+       <AddAllComment comments={item.comment || []}/>
+        </div>
+
+       
 
     </div>
 
@@ -129,7 +178,7 @@ const Page = () => {
       <h1 className="text-[#404040] font-[700] tracking-wider absolute top-[7px] left-[75px]">{item.author.name}</h1>
       <button className=' font-[600] bg-[#3b4edf] mt-2  rounded-md w-full border-[1px] border-[#3b4edf] text-[white] p-2'>Follow</button>
       <p className='mt-4'>
-      <span className='font-[500] text-[#404040] leading-3 font-sans tracking-wider'>𝗙𝗿𝗼𝗻𝘁-𝗲𝗻𝗱 𝗱𝗲𝘃𝗲𝗹𝗼𝗽𝗲𝗿 |</span> {item.author.bio}
+      <span className='font-[500] text-[#404040] leading-3 font-sans tracking-wider'>{item.designation}</span> {item.author.bio}
       </p>
 
       <div className='mt-6 font-[600]'>
@@ -137,21 +186,29 @@ const Page = () => {
       <p className='mt-[2px]'>{format(new Date(item.initialValue), "MMM dd yyyy")}</p>
       </div>
        </div>
+
+       
        </div>
 
 
        <div className='mt-4'>
        <GridColum3/>
        </div>
+
+
+      
     </div>
 
-  
+   
 
       </div>
+   
       </div>
-      ))}
+       ))}
+    
     </>
   )
+}
 }
 
 export default Page
