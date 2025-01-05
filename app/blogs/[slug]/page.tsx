@@ -90,7 +90,7 @@ const Page = () => {
     fecthingData()
     
 
-  },[params.slug])
+  },[params.slug , data])
   
 if(loading){
 return(
