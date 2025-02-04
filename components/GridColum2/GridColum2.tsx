@@ -24,6 +24,7 @@ const GridColum2 = () => {
   const [lenght, setLenght] = useState<number>();
   const [toggle, setToggle] = useState<boolean>(false);
   const divRef = useRef<HTMLTextAreaElement | null>(null); // use ref is connected with text area so text area elements is in inside the divRef
+  const [loading , setloading] = useState(true)
 
   function toggleColorDiv() {
     setToggle(true);
@@ -73,6 +74,7 @@ const GridColum2 = () => {
       const response : blog[] = await client.fetch(query)
        
         localStorage.setItem("blogData", JSON.stringify(response));
+        setloading(false)
        
         
       } catch(error){
@@ -84,7 +86,7 @@ const GridColum2 = () => {
   },[])
     
 
-  if(!data){
+  if(loading){
     return(
           <>
           <div className="w-full h-screen bg-slate-300 flex justify-center items-center text-black">
