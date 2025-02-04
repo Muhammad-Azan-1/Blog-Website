@@ -63,18 +63,19 @@ const GridColum2 = () => {
   useEffect(() => {
     async function fetchData(){
 
-      const storedData = localStorage.getItem("blogData");
+      const storedData = sessionStorage.getItem("blogData");
       if(storedData){
         const getData = JSON.parse(storedData);
        setData(getData)
+       setloading(false)
 
       }else{
         
      try{ const query = `*[_type == "blog"] | order(_createdAt asc){title , id , image , "slug": slug.current,author->{name, bio, image }, initialValue}`
       const response : blog[] = await client.fetch(query)
-       
-        localStorage.setItem("blogData", JSON.stringify(response));
+        sessionStorage.setItem("blogData", JSON.stringify(response));
         setloading(false)
+        setData(response)
        
         
       } catch(error){
