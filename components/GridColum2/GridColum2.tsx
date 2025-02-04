@@ -84,10 +84,16 @@ const GridColum2 = () => {
   },[])
     
 
-    
-
-
-  //!The scrollHeight property tells you the total height of the content inside an element, regardless of whether all of it is visible.
+  if(!data){
+    return(
+          <>
+          <div className="w-full h-screen bg-slate-300 flex justify-center items-center text-black">
+            please wait data is laoding...
+          </div>
+        </>
+    )
+  }
+    //!The scrollHeight property tells you the total height of the content inside an element, regardless of whether all of it is visible.
 
   return (
     <>
